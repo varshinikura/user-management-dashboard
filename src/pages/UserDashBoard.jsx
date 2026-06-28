@@ -9,6 +9,7 @@ function UserDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [error, setError] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [sortField, setSortField] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -80,10 +81,10 @@ function UserDashboard() {
   };
 
   const handleSort = (field) => {
-    console.log(field);
+    setSortField(field);
   };
 
-  const filteredUsers = users.filter((user) => {
+  let filteredUsers = users.filter((user) => {
     return (
       user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -91,6 +92,12 @@ function UserDashboard() {
       user.department.toLowerCase().includes(searchText.toLowerCase())
     );
   });
+
+  if (sortField) {
+    filteredUsers = [...filteredUsers].sort((a, b) =>
+      String(a[sortField]).localeCompare(String(b[sortField]))
+    );
+  }
 
   return (
     <div className="container">
