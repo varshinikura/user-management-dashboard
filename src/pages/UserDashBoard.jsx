@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { getUsers, addUser, updateUser, deleteUser } from "../api/userApi";
 import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
+import SearchBar from "../components/SearchBar";
 
 function UserDashboard() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [error, setError] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     fetchUsers();
@@ -81,6 +83,15 @@ function UserDashboard() {
     console.log(field);
   };
 
+  const filteredUsers = users.filter((user) => {
+    return (
+      user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.department.toLowerCase().includes(searchText.toLowerCase())
+    );
+  });
+
   return (
     <div className="container">
       <h1>User Management Dashboard</h1>
@@ -93,8 +104,10 @@ function UserDashboard() {
         onCancel={() => setSelectedUser(null)}
       />
 
+      <SearchBar searchText={searchText} setSearchText={setSearchText} />
+
       <UserTable
-        users={users}
+        users={filteredUsers}
         onEdit={setSelectedUser}
         onDelete={handleDelete}
         onSort={handleSort}
