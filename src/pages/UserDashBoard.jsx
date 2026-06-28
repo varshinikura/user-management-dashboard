@@ -5,6 +5,7 @@ import UserTable from "../components/UserTable";
 import SearchBar from "../components/SearchBar";
 import FilterPopup from "../components/FilterPopup";
 import Pagination from "../components/Pagination";
+import ErrorMessage from "../components/ErrorMessage";
 
 function UserDashboard() {
   const [users, setUsers] = useState([]);
@@ -46,6 +47,8 @@ function UserDashboard() {
 
   const handleSubmit = async (user) => {
     try {
+      setError("");
+
       if (selectedUser) {
         await updateUser(selectedUser.id, user);
 
@@ -84,6 +87,7 @@ function UserDashboard() {
     }
 
     try {
+      setError("");
       await deleteUser(id);
       setUsers(users.filter((user) => user.id !== id));
     } catch {
@@ -134,7 +138,7 @@ function UserDashboard() {
     <div className="container">
       <h1>User Management Dashboard</h1>
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <ErrorMessage message={error} />}
 
       <UserForm
         selectedUser={selectedUser}
