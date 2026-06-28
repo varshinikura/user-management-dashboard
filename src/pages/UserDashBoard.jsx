@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers } from "../api/userApi";
+import { getUsers, addUser } from "../api/userApi";
 import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
 
@@ -30,8 +30,20 @@ function UserDashboard() {
     }
   };
 
-  const handleSubmit = (user) => {
-    console.log(user);
+  const handleSubmit = async (user) => {
+    try {
+      const newUser = await addUser(user);
+
+      setUsers([
+        ...users,
+        {
+          ...user,
+          id: newUser.id || users.length + 1,
+        },
+      ]);
+    } catch {
+      setError("Failed to add user");
+    }
   };
 
   const handleDelete = (id) => {
