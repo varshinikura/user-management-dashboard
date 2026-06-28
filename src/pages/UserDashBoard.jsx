@@ -3,6 +3,7 @@ import { getUsers, addUser, updateUser, deleteUser } from "../api/userApi";
 import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
 import SearchBar from "../components/SearchBar";
+import FilterPopup from "../components/FilterPopup";
 
 function UserDashboard() {
   const [users, setUsers] = useState([]);
@@ -10,6 +11,14 @@ function UserDashboard() {
   const [error, setError] = useState("");
   const [searchText, setSearchText] = useState("");
   const [sortField, setSortField] = useState("");
+  const [showFilter, setShowFilter] = useState(false);
+
+  const [filters, setFilters] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    department: "",
+  });
 
   useEffect(() => {
     fetchUsers();
@@ -84,12 +93,30 @@ function UserDashboard() {
     setSortField(field);
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      firstName: "",
+      lastName: "",
+      email: "",
+      department: "",
+    });
+  };
+
   let filteredUsers = users.filter((user) => {
     return (
       user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
       user.email.toLowerCase().includes(searchText.toLowerCase()) ||
       user.department.toLowerCase().includes(searchText.toLowerCase())
+    );
+  });
+
+  filteredUsers = filteredUsers.filter((user) => {
+    return (
+      user.firstName.toLowerCase().includes(filters.firstName.toLowerCase()) &&
+      user.lastName.toLowerCase().includes(filters.lastName.toLowerCase()) &&
+      user.email.toLowerCase().includes(filters.email.toLowerCase()) &&
+      user.department.toLowerCase().includes(filters.department.toLowerCase())
     );
   });
 
@@ -111,7 +138,22 @@ function UserDashboard() {
         onCancel={() => setSelectedUser(null)}
       />
 
-      <SearchBar searchText={searchText} setSearchText={setSearchText} />
+      <div className="top-bar">
+        <SearchBar searchText={searchText} setSearchText={setSearchText} />
+
+        <button type="button" onClick={() => setShowFilter(true)}>
+          Filter
+        </button>
+      </div>
+
+      {showFilter && (
+        <FilterPopup
+          filters={filters}
+          setFilters={setFilters}
+          onClose={() => setShowFilter(false)}
+          onClear={handleClearFilters}
+        />
+      )}
 
       <UserTable
         users={filteredUsers}
