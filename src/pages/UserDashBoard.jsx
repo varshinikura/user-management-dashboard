@@ -4,6 +4,7 @@ import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
 import SearchBar from "../components/SearchBar";
 import FilterPopup from "../components/FilterPopup";
+import Pagination from "../components/Pagination";
 
 function UserDashboard() {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,7 @@ function UserDashboard() {
   const [searchText, setSearchText] = useState("");
   const [sortField, setSortField] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [limit, setLimit] = useState(10);
 
   const [filters, setFilters] = useState({
     firstName: "",
@@ -126,6 +128,8 @@ function UserDashboard() {
     );
   }
 
+  const paginatedUsers = filteredUsers.slice(0, limit);
+
   return (
     <div className="container">
       <h1>User Management Dashboard</h1>
@@ -140,6 +144,8 @@ function UserDashboard() {
 
       <div className="top-bar">
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
+
+        <Pagination limit={limit} setLimit={setLimit} />
 
         <button type="button" onClick={() => setShowFilter(true)}>
           Filter
@@ -156,7 +162,7 @@ function UserDashboard() {
       )}
 
       <UserTable
-        users={filteredUsers}
+        users={paginatedUsers}
         onEdit={setSelectedUser}
         onDelete={handleDelete}
         onSort={handleSort}
