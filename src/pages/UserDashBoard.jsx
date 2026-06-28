@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers, addUser } from "../api/userApi";
+import { getUsers, addUser, updateUser } from "../api/userApi";
 import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
 
@@ -32,17 +32,31 @@ function UserDashboard() {
 
   const handleSubmit = async (user) => {
     try {
-      const newUser = await addUser(user);
+      if (selectedUser) {
+        await updateUser(selectedUser.id, user);
 
-      setUsers([
-        ...users,
-        {
-          ...user,
-          id: newUser.id || users.length + 1,
-        },
-      ]);
+        setUsers(
+          users.map((item) =>
+            item.id === selectedUser.id
+              ? { ...user, id: selectedUser.id }
+              : item
+          )
+        );
+
+        setSelectedUser(null);
+      } else {
+        const newUser = await addUser(user);
+
+        setUsers([
+          ...users,
+          {
+            ...user,
+            id: newUser.id || users.length + 1,
+          },
+        ]);
+      }
     } catch {
-      setError("Failed to add user");
+      setError("Failed to save user");
     }
   };
 
