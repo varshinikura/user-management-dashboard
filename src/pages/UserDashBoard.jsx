@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUsers, addUser, updateUser } from "../api/userApi";
+import { getUsers, addUser, updateUser, deleteUser } from "../api/userApi";
 import UserForm from "../components/UserForm";
 import UserTable from "../components/UserTable";
 
@@ -60,8 +60,21 @@ function UserDashboard() {
     }
   };
 
-  const handleDelete = (id) => {
-    console.log(id);
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await deleteUser(id);
+      setUsers(users.filter((user) => user.id !== id));
+    } catch {
+      setError("Failed to delete user");
+    }
   };
 
   const handleSort = (field) => {
